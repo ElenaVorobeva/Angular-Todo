@@ -1,7 +1,7 @@
 import { Component, NgModule, Pipe } from '@angular/core';
 import { TasksListService } from 'src/app/services/tasks-list.service';
 import type { Task } from 'src/app/services/tasks-list.service';
-import {CdkDragDrop, moveItemInArray, DragDropModule} from '@angular/cdk/drag-drop';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'my-tasks',
