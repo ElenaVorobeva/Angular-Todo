@@ -1,49 +1,67 @@
-<h1>Help Me Do It</h1>
+<h1>Tasks</h1>
 
-<h3>Manage your time wisely!</h3>
-<label class="mt-5" for="newTask">What are you up to?</label>
-<div class="input mb-4">
-    <input class="form-control" [(ngModel)]="newTask" [value]="newTask" id="newTask" placeholder="Enter a new task"/>
-    <button class="btn btn-primary" (click)="addATask(newTask)">Add</button>
-</div>
+<input
+  #title
+  (keyup.enter)="createTask(title)"
+  type="text"
+  class="form-control"
+/>
 
-<ul
-    *ngIf="tasks?.length"
-    cdkDropList
-    class="example-list"
-    (cdkDropListDropped)="drop($event)"
->
-    
-    <li
-        *ngFor="let item of tasks; index as i"
-        (click)="showInfo($event)"
-        class="example-box"
-        cdkDrag
-    >
+<ul class="list-group">
+  <!-- <li
+    class="list-group-item d-flex justify-content-between"
+    *ngFor="let task of tasks"
+  >
+    <p>{{ task.title }}</p>
+    <div>
+      <button class="btn btn-primary btn-sm mx-2" (click)="editTask(task)">
+        Edit
+      </button>
+      <button class="btn btn-danger btn-sm" (click)="deleteTask(task)">
+        Delete
+      </button>
+    </div>
+  </li> -->
+  <li *ngFor="let task of tasks" class="list-group-item">
+    <div *ngIf="task.isBeingEdited; then thenBlock; else elseBlock"></div>
+    <ng-template #thenBlock>
+      <div class="task">
+        <input
+          class="form-control"
+          [value]="task.title"
+          [(ngModel)]="newTitle"
+        />
 
-        <div *ngIf="item.isBeingEdited; then thenBlock else elseBlock"></div>
-        <ng-template #thenBlock>
-            <div class="task">
-                <input class="form-control" [value]="item.task" [(ngModel)]="editedTask"/>
-                
-                <div class="buttons">
-                    <button class="btn btn-success btn-sm" (click)="saveATask(i)">Save</button>
-                    <button class="btn btn-secondary btn-sm" (click)="cancelEditingATask(i)">Cancel</button>
-                </div>
-            </div>
-        </ng-template>
-        <ng-template #elseBlock>
-            <div class="task">
-                <p [class.task__text]="item.task.length > 45" (mouseover)="setContent($event, i)">
-                {{item.task | summary}}
-                </p>
-                <div class="buttons">
-                    <button class="btn btn-primary btn-sm" (click)="editATask(i, item.task)">Edit</button>
-                    <button class="btn btn-danger btn-sm" (click)="deleteATask(i)">Delete</button>
-                </div>
-            </div>
-        </ng-template>
-        
-    </li>
-    
+        <div class="buttons">
+          <button class="btn btn-success btn-sm" (click)="saveTask(task)">
+            Save
+          </button>
+          <button
+            class="btn btn-secondary btn-sm"
+            (click)="cancelEditingTask(task)"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template #elseBlock>
+      <div class="task">
+        <p
+          [class.task__text]="task.title.length > 45"
+          (mouseover)="setContent($event, task)"
+        >
+          {{ task.title | summary }}
+        </p>
+        <div class="buttons">
+          <button class="btn btn-primary btn-sm" (click)="editTask(task)">
+            Edit
+          </button>
+          <button class="btn btn-danger btn-sm" (click)="deleteTask(task)">
+            Delete
+          </button>
+        </div>
+      </div>
+    </ng-template>
+  </li>
 </ul>

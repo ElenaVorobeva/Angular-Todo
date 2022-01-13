@@ -1,63 +1,72 @@
-import { Component, NgModule, Pipe } from '@angular/core';
-import { TasksListService } from 'src/app/services/tasks-list.service';
-import type { Task } from 'src/app/services/tasks-list.service';
-import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+import { TasksService } from './../../services/tasks.service';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'my-tasks',
+  selector: 'tasks',
   templateUrl: './tasks.component.html',
   styleUrls: ['./tasks.component.scss'],
 })
+export class TasksComponent implements OnInit {
+  tasks: any;
+  newTitle!: string;
 
-export class TasksComponent {
-  newTask: string = "";
-  editedTask!: string;
-  tasks!: Task[];
-  i!: number;
+  constructor(private service: TasksService) {}
 
-  constructor(service: TasksListService) {
-    this.tasks = service.getTasksList();
+  ngOnInit(): void {
+    this.service.getAll().subscribe({
+      next: (tasks) => (this.tasks = tasks),
+    });
   }
 
-  addATask(task: string): void {
-    if (task) {
-      this.tasks.push({task, isBeingEdited: false})
-      this.newTask = "";
-    }
+  createTask(input: HTMLInputElement) {
+    let task: any = {
+      title: input.value,
+      creationData: Date.now(),
+    };
+    this.tasks.splice(0, 0, task);
+    input.value = '';
+
+    this.service.create(task).subscribe({
+      error: () => {
+        this.tasks.splice(0, 1);
+      },
+    });
   }
 
-  deleteATask(i: number): void {
-    this.tasks = this.tasks.filter((_, index) => index !== i)
+  editTask(task: any): void {
+    task.isBeingEdited = true;
+    this.newTitle = task.title;
+    console.log(task);
   }
 
-  editATask(i: number, editedTask: string): void {
-    this.editedTask = editedTask;
-    this.tasks = this.tasks.map((task, index) => (
-      index === i ? {...task, isBeingEdited: true} : {...task, isBeingEdited: false}
-    ))
+  saveTask(task: any): void {
+    const oldTitle = task.title;
+
+    delete task.isBeingEdited;
+    task.title = this.newTitle;
+
+    this.service.update(task).subscribe({
+      error: () => {
+        task.title = oldTitle;
+      },
+    });
   }
 
-  saveATask(i: number): void {
-    this.tasks = this.tasks.map((task, index) => (
-      index === i ? {task: this.editedTask, isBeingEdited: false} : task
-    ))
+  cancelEditingTask(task: any): void {
+    task.isBeingEdited = false;
   }
 
-  cancelEditingATask(i: number): void {
-    this.tasks = this.tasks.map((task, index) => (
-      index === i ? {...task, isBeingEdited: false} : task
-    ))
+  deleteTask(task: any): void {
+    let index = this.tasks.indexOf(task);
+    this.tasks.splice(index, 1);
+    this.service.delete(task.id).subscribe({
+      error: () => {
+        this.tasks.splice(index, 0, task);
+      },
+    });
   }
 
-  setContent(event: any, i: number): void {
-    event.target.setAttribute('data-after', this.tasks[i].task)
-  }
-
-  showInfo(event: any): void {
-    console.log('test: ', event.target.dataset.index)
-  }
-
-  drop(event: CdkDragDrop<{task: string; isBeingEdited: boolean}[]>) {
-    moveItemInArray(this.tasks, event.previousIndex, event.currentIndex);
+  setContent(event: any, task: any): void {
+    event.target.setAttribute('data-after', task.title);
   }
 }
