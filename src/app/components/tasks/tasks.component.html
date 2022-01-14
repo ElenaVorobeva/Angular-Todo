@@ -4,24 +4,11 @@
   #title
   (keyup.enter)="createTask(title)"
   type="text"
-  class="form-control"
+  class="form-control mb-5"
+  placeholder="Enter a new task"
 />
 
 <ul class="list-group">
-  <!-- <li
-    class="list-group-item d-flex justify-content-between"
-    *ngFor="let task of tasks"
-  >
-    <p>{{ task.title }}</p>
-    <div>
-      <button class="btn btn-primary btn-sm mx-2" (click)="editTask(task)">
-        Edit
-      </button>
-      <button class="btn btn-danger btn-sm" (click)="deleteTask(task)">
-        Delete
-      </button>
-    </div>
-  </li> -->
   <li *ngFor="let task of tasks" class="list-group-item">
     <div *ngIf="task.isBeingEdited; then thenBlock; else elseBlock"></div>
     <ng-template #thenBlock>

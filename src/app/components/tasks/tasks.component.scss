@@ -26,7 +26,6 @@ ul {
 }
 
 li {
-  margin-bottom: 10px;
   list-style: none;
 
   & > div {
@@ -35,13 +34,9 @@ li {
     max-height: 41px;
 
     & > input {
-      width: 90%;
+      width: 70%;
     }
   }
-}
-
-li:last-child {
-  margin-bottom: 0;
 }
 
 .task {

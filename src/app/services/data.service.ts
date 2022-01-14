@@ -1,3 +1,6 @@
+import { MyTask } from './../common/task-type';
+import { NotFoundError } from './../common/not-found-error';
+import { AppError } from './../common/app-error';
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, map } from 'rxjs/operators';
@@ -17,23 +20,26 @@ export class DataService {
 
   create(resource: { title: string }): Observable<Object> {
     return this.http
-      .post(this.url, resource)
+      .post('this.url', resource)
       .pipe(catchError(this.errorHandler));
   }
 
-  update(resource: any): Observable<Object> {
+  update(resource: MyTask): Observable<Object> {
     return this.http
       .patch(this.url + '/' + resource.id, { title: resource.title })
       .pipe(catchError(this.errorHandler));
   }
 
   delete(id: number): Observable<Object> {
-    return this.http
-      .delete(this.url + '/' + id)
-      .pipe(catchError(this.errorHandler));
+    return this.http.delete(this.url + '/' + id).pipe(
+      map((response) => JSON.parse(JSON.stringify(response))),
+      catchError(this.errorHandler)
+    );
   }
 
-  private errorHandler(error: HttpErrorResponse) {
-    return throwError(() => alert('An error occured. ' + error.message));
+  private errorHandler(error: HttpErrorResponse): Observable<never> {
+    if (error.status === 404) return throwError(() => new NotFoundError());
+
+    return throwError(() => new AppError(error));
   }
 }

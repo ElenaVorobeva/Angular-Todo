@@ -1,3 +1,6 @@
+import { MyTask } from './../../common/task-type';
+import { NotFoundError } from './../../common/not-found-error';
+import { throwError } from 'rxjs';
 import { TasksService } from './../../services/tasks.service';
 import { Component, OnInit } from '@angular/core';
 
@@ -18,7 +21,7 @@ export class TasksComponent implements OnInit {
     });
   }
 
-  createTask(input: HTMLInputElement) {
+  createTask(input: HTMLInputElement): void {
     let task: any = {
       title: input.value,
       creationData: Date.now(),
@@ -27,46 +30,57 @@ export class TasksComponent implements OnInit {
     input.value = '';
 
     this.service.create(task).subscribe({
-      error: () => {
+      next: (newTask) => {
+        task.id = JSON.parse(JSON.stringify(newTask)).id;
+      },
+      error: (error) => {
         this.tasks.splice(0, 1);
+        throwError(() => error);
       },
     });
   }
 
-  editTask(task: any): void {
+  editTask(task: MyTask): void {
     task.isBeingEdited = true;
     this.newTitle = task.title;
     console.log(task);
   }
 
-  saveTask(task: any): void {
+  saveTask(task: MyTask): void {
     const oldTitle = task.title;
 
     delete task.isBeingEdited;
     task.title = this.newTitle;
 
-    this.service.update(task).subscribe({
-      error: () => {
-        task.title = oldTitle;
-      },
-    });
+    if (task.title !== oldTitle) {
+      this.service.update(task).subscribe({
+        error: (error) => {
+          task.title = oldTitle;
+          throwError(() => error);
+        },
+      });
+    }
   }
 
-  cancelEditingTask(task: any): void {
+  cancelEditingTask(task: MyTask): void {
     task.isBeingEdited = false;
   }
 
-  deleteTask(task: any): void {
+  deleteTask(task: MyTask): void {
     let index = this.tasks.indexOf(task);
     this.tasks.splice(index, 1);
+
     this.service.delete(task.id).subscribe({
-      error: () => {
+      error: (error) => {
         this.tasks.splice(index, 0, task);
+        if (error instanceof NotFoundError)
+          alert('This post has already been deleted.');
+        else throwError(() => error);
       },
     });
   }
 
-  setContent(event: any, task: any): void {
+  setContent(event: any, task: MyTask): void {
     event.target.setAttribute('data-after', task.title);
   }
 }

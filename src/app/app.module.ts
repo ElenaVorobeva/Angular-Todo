@@ -1,6 +1,7 @@
+import { AppErrorHandler } from './common/app-error-handler';
 import { TasksService } from './services/tasks.service';
 import { FormsModule } from '@angular/forms';
-import { NgModule } from '@angular/core';
+import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -20,7 +21,13 @@ import { TasksComponent } from './components/tasks/tasks.component';
     DragDropModule,
     HttpClientModule,
   ],
-  providers: [TasksService],
+  providers: [
+    TasksService,
+    {
+      provide: ErrorHandler,
+      useClass: AppErrorHandler,
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
