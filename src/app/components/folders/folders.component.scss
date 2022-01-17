@@ -25,6 +25,12 @@ ul {
   counter-reset: tasks;
 }
 
+ul,
+h5 {
+  margin: 0;
+  padding: 0;
+}
+
 li {
   list-style: none;
 
@@ -39,7 +45,15 @@ li {
   }
 }
 
-.task {
+a {
+  text-decoration: none;
+}
+
+.card {
+  margin-bottom: 10px;
+}
+
+.folder {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -52,7 +66,7 @@ li {
     margin-right: 0;
   }
 
-  & > .task__text::after {
+  & > .folder__text::after {
     content: attr(data-after);
     max-width: 500px;
     position: absolute;
@@ -69,7 +83,7 @@ li {
     transition: transform ease-out 150ms, bottom ease-out 150ms;
   }
 
-  & > .task__text:hover::after {
+  & > .folder__text:hover::after {
     transform: scale(1);
     bottom: 100%;
   }

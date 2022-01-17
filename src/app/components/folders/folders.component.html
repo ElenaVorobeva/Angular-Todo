@@ -1,0 +1,56 @@
+<h1>Folders</h1>
+
+<input
+  #title
+  (keyup.enter)="createFolder(title)"
+  type="text"
+  class="form-control mb-5"
+  placeholder="Enter a new folder"
+/>
+
+<ul class="list-group">
+  <li *ngFor="let folder of folders" class="list-group-item">
+    <div *ngIf="folder.isBeingEdited; then thenBlock; else elseBlock"></div>
+    <ng-template #thenBlock>
+      <div class="folder">
+        <input
+          class="form-control"
+          [value]="folder.title"
+          [(ngModel)]="newTitle"
+          (keyup.enter)="saveFolder(folder)"
+        />
+
+        <div class="buttons">
+          <button class="btn btn-success btn-sm" (click)="saveFolder(folder)">
+            Save
+          </button>
+          <button
+            class="btn btn-secondary btn-sm"
+            (click)="cancelEditingFolder(folder)"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template #elseBlock>
+      <div class="folder">
+        <a
+          [class.folder__text]="folder.title.length > 45"
+          (mouseover)="setContent($event, folder)"
+          [routerLink]="['/folders', folder.id, folder.title]"
+        >
+          {{ folder.title | summary }}
+        </a>
+        <div class="buttons">
+          <button class="btn btn-primary btn-sm" (click)="editFolder(folder)">
+            Edit
+          </button>
+          <button class="btn btn-danger btn-sm" (click)="deleteFolder(folder)">
+            Delete
+          </button>
+        </div>
+      </div>
+    </ng-template>
+  </li>
+</ul>

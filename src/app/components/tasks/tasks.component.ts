@@ -1,8 +1,9 @@
-import { MyTask } from './../../common/task-type';
+import { MyTask } from '../../common/types';
 import { NotFoundError } from './../../common/not-found-error';
 import { throwError } from 'rxjs';
 import { TasksService } from './../../services/tasks.service';
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'tasks',
@@ -12,12 +13,18 @@ import { Component, OnInit } from '@angular/core';
 export class TasksComponent implements OnInit {
   tasks: any;
   newTitle!: string;
+  id!: string;
 
-  constructor(private service: TasksService) {}
+  constructor(private service: TasksService, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    this.service.getAll().subscribe({
-      next: (tasks) => (this.tasks = tasks),
+    this.route.paramMap.subscribe((params: any) => {
+      this.id = params.get('id');
+    });
+    this.service.getTasks(this.id).subscribe({
+      next: (folder) => {
+        this.tasks = JSON.parse(JSON.stringify(folder));
+      },
     });
   }
 
@@ -25,6 +32,7 @@ export class TasksComponent implements OnInit {
     let task: any = {
       title: input.value,
       creationData: Date.now(),
+      folder: this.id,
     };
     this.tasks.splice(0, 0, task);
     input.value = '';

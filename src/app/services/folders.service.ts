@@ -1,24 +1,24 @@
 import { Injectable } from '@angular/core';
-import { MyTask } from '../common/types';
 import { NotFoundError } from './../common/not-found-error';
 import { AppError } from './../common/app-error';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, map } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
+import { MyFolder } from '../common/types';
+
 @Injectable({
   providedIn: 'root',
 })
-export class TasksService {
-  url: string = 'http://localhost:3000/tasks/';
+export class FoldersService {
+  url: string = 'http://localhost:3000/folders/';
+
   constructor(private http: HttpClient) {}
 
-  getTasks(id: string): Observable<Object> {
-    return this.http
-      .get(this.url + `?folder=${id}&_sort=creationData&_order=desc`)
-      .pipe(
-        map((response) => JSON.parse(JSON.stringify(response))),
-        catchError(this.errorHandler)
-      );
+  getFolders(): Observable<Object> {
+    return this.http.get(this.url + `?_sort=creationData&_order=desc`).pipe(
+      map((response) => JSON.parse(JSON.stringify(response))),
+      catchError(this.errorHandler)
+    );
   }
 
   create(resource: {
@@ -32,7 +32,7 @@ export class TasksService {
     );
   }
 
-  update(resource: MyTask): Observable<Object> {
+  update(resource: MyFolder): Observable<Object> {
     return this.http
       .patch(this.url + resource.id, {
         title: resource.title,

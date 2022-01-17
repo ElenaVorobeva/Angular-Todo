@@ -1,14 +1,44 @@
 {
-  "tasks": [
+  "folders": [
     {
-      "title": "write error types for requests",
-      "creationData": 1642147645247,
-      "id": 1
+      "title": "Folder 1",
+      "id": 2
     },
     {
-      "title": "this is a long task. Hover it to see its full message.",
-      "creationData": 1642148520360,
+      "title": "Folder 2",
+      "creationData": 1642420448427,
       "id": 3
+    },
+    {
+      "title": "Something",
+      "creationData": 1642429083600,
+      "id": 4
+    }
+  ],
+  "tasks": [
+    {
+      "title": "Test 1",
+      "creationData": 1642415260495,
+      "folder": "1",
+      "id": 2
+    },
+    {
+      "title": "Test 2.0",
+      "creationData": 1642415459731,
+      "folder": "1",
+      "id": 3
+    },
+    {
+      "title": "Folder 2",
+      "creationData": 1642416983754,
+      "folder": "2",
+      "id": 4
+    },
+    {
+      "title": "test 3",
+      "creationData": 1642420495611,
+      "folder": "3",
+      "id": 5
     }
   ]
 }

@@ -11,9 +11,10 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 
 import { HttpClientModule } from '@angular/common/http';
 import { TasksComponent } from './components/tasks/tasks.component';
+import { FoldersComponent } from './components/folders/folders.component';
 
 @NgModule({
-  declarations: [AppComponent, SummaryPipe, TasksComponent],
+  declarations: [AppComponent, SummaryPipe, TasksComponent, FoldersComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
